@@ -67,7 +67,8 @@ public class ClassUtil {
         }
 
         // 如果是一个文件夹，则调用其listFiles方法获取文件夹下的文件或文件夹
-        // 这个地方用FileFilter获取文件夹其实是多此一举，因为这里的目的是要加载该目录下的字节码文件，因此可以选择直接遍历的方式，不需要先获取目录
+        // 这个地方也算是一个妙用，避免了用一般遍历算法，多写一个方法
+        // 这个files装的全部是目录
         File[] files = fileSource.listFiles(new FileFilter() {
 
             @Override
