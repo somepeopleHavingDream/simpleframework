@@ -42,60 +42,88 @@ public class ClassUtil {
         }
 
         // 3. 依据不同的资源类型，采用不同的方式获取资源的集合
-        Set<Class<?>> classSet;
+        Set<Class<?>> classSet = new HashSet<>();
         // 过滤出文件类型的资源
         if (url.getProtocol().equalsIgnoreCase(FILE_PROTOCOL)) {
-            classSet = new HashSet<>();
             File packageDirectory = new File(url.getPath());
             extractClassFile(classSet, packageDirectory, packageName);
         }
-        return Collections.emptySet();
+
+        // todo 此处可以加入针对其他类型资源的处理
+        return classSet;
     }
 
     /**
      * 递归获取目标package里面的所有class文件（包括子package里的class文件）
      *
-     * @param classSet 装载目标类的集合
-     * @param fileSource 文件或者目录
+     * @param emptyClassSet    装载目标类的集合
+     * @param fileSource  文件或者目录
      * @param packageName 包名
      */
-    private static void extractClassFile(Set<Class<?>> classSet, File fileSource, String packageName) {
+    private static void extractClassFile(Set<Class<?>> emptyClassSet, File fileSource, String packageName) {
+        // 如果当前文件不是一个目录则直接退出
         if (!fileSource.isDirectory()) {
             return;
         }
 
         // 如果是一个文件夹，则调用其listFiles方法获取文件夹下的文件或文件夹
-        File[] files = fileSource.listFiles(file -> {
-            if (file.isDirectory()) {
-                return true;
-            } else {
-                // 获取文件的绝对值路径
-                String absolutePath = file.getAbsolutePath();
-                if (absolutePath.endsWith(".class")) {
-                    // 若是class文件，则直接加载
-                    addToClassSet(absolutePath);
+        // 这个地方用FileFilter获取文件夹其实是多此一举，因为这里的目的是要加载该目录下的字节码文件，因此可以选择直接遍历的方式，不需要先获取目录
+        File[] files = fileSource.listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File file) {
+                if (file.isDirectory()) {
+                    return true;
+                } else {
+                    // 获取文件的绝对路径
+                    String absolutePath = file.getAbsolutePath();
+                    if (absolutePath.endsWith(".class")) {
+                        // 若是class文件，则直接加载
+                        addToClassSet(absolutePath);
+                    }
                 }
+
+                return false;
             }
 
-            return false;
+            /**
+             * 根据class文件的绝对路径，获取并生成class对象，并放入classSet中
+             *  @param absoluteFilePath 绝对路径
+             */
+            private void addToClassSet(String absoluteFilePath) {
+                // 1. 从class文件的绝对值路径里提取出包含了package的类名
+                // 如/Users/baidu/imooc/springframework/sampleframework/target/classes/com/imooc/entity/dto/MainPageInfoDTO
+                // 需要弄成com.imooc.entity.dto.MainPageInfoDTO
+                absoluteFilePath = absoluteFilePath.replace(File.separator, ".");
+                String className = absoluteFilePath.substring(absoluteFilePath.indexOf(packageName),
+                        absoluteFilePath.lastIndexOf("."));
+//                className = className.substring(0, className.lastIndexOf("."));
+
+                // 2. 通过反射机制获取对应的Class对象并加入到classSet里
+                Class<?> targetClass = loadClass(className);
+                emptyClassSet.add(targetClass);
+            }
         });
 
-        if (files != null) {
+        if (files != null){
             // 递归调用
-            Arrays.stream(files).forEach(file -> extractClassFile(classSet, fileSource, packageName));
+            Arrays.stream(files).forEach(file -> extractClassFile(emptyClassSet, file, packageName));
         }
     }
 
     /**
-     * 根据class文件的绝对路径，获取并生成class对象，并放入classSet中
+     * 获取Class对象
      *
-     * @param absolutePath 绝对路径
+     * @param className class全名 = package + 类名
+     * @return Class对象
      */
-    private static void addToClassSet(String absolutePath) {
-        // 1. 从class文件的绝对值路径里提取出包含了package的类名
-        // 2. 通过反射机制获取对应的Class对象并加入到classSet里
-        // 如/Users/baidu/imooc/springframework/sampleframework/target/classes/com/imooc/entity/dto/MainPageInfoDTO
-        // 需要弄成com.imooc.entity.dto.MainPageInfoDTO
+    public static Class<?> loadClass(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            log.error("load class error: ", e);
+            throw new RuntimeException(e);
+        }
     }
 
     /**
