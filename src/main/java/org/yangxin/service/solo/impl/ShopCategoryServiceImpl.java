@@ -1,6 +1,5 @@
 package org.yangxin.service.solo.impl;
 
-import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.bo.ShopCategory;
 import org.yangxin.entity.dto.Result;
 import org.yangxin.service.solo.ShopCategoryService;
@@ -29,7 +28,7 @@ public class ShopCategoryServiceImpl implements ShopCategoryService {
     }
 
     @Override
-    public Result<HeadLine> queryShopCategoryById(int shopCategoryId) {
+    public Result<ShopCategory> queryShopCategoryById(int shopCategoryId) {
         return null;
     }
 
