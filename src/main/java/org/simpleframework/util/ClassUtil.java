@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,9 +58,9 @@ public class ClassUtil {
     /**
      * 递归获取目标package里面的所有class文件（包括子package里的class文件）
      *
-     * @param emptyClassSet    装载目标类的集合
-     * @param fileSource  文件或者目录
-     * @param packageName 包名
+     * @param emptyClassSet 装载目标类的集合
+     * @param fileSource    文件或者目录
+     * @param packageName   包名
      */
     private static void extractClassFile(Set<Class<?>> emptyClassSet, File fileSource, String packageName) {
         // 如果当前文件不是一个目录则直接退出
@@ -98,7 +100,6 @@ public class ClassUtil {
                 absoluteFilePath = absoluteFilePath.replace(File.separator, ".");
                 String className = absoluteFilePath.substring(absoluteFilePath.indexOf(packageName),
                         absoluteFilePath.lastIndexOf("."));
-//                className = className.substring(0, className.lastIndexOf("."));
 
                 // 2. 通过反射机制获取对应的Class对象并加入到classSet里
                 Class<?> targetClass = loadClass(className);
@@ -106,7 +107,7 @@ public class ClassUtil {
             }
         });
 
-        if (files != null){
+        if (files != null) {
             // 递归调用
             Arrays.stream(files).forEach(file -> extractClassFile(emptyClassSet, file, packageName));
         }
@@ -123,6 +124,27 @@ public class ClassUtil {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
             log.error("load class error: ", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 实例化class
+     *
+     * @param clazz      字节码对象
+     * @param accessible 是否支持创建出私有class对象的实例
+     * @param <T>        class的类型
+     * @return 实例化出来的对象
+     */
+    public static <T> T newInstance(Class<?> clazz, boolean accessible) {
+        try {
+            Constructor<?> constructor = clazz.getDeclaredConstructor();
+            // 在Java中可以通过反射进行获取实体类中的字段值，当未设置Field的setAccessible方法为true时，会在调用的时候进行访问安全检查，
+            // 会抛出IllegalAccessException异常
+            constructor.setAccessible(accessible);
+            return (T) constructor.newInstance();
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            log.error("newInstance error", e);
             throw new RuntimeException(e);
         }
     }

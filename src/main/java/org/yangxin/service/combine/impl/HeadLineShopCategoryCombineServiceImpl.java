@@ -1,5 +1,6 @@
 package org.yangxin.service.combine.impl;
 
+import org.simpleframework.core.annotation.Service;
 import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.bo.ShopCategory;
 import org.yangxin.entity.dto.MainPageInfoDTO;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author yangxin
  * 2020/06/19 11:41
  */
+@Service
 public class HeadLineShopCategoryCombineServiceImpl implements HeadLineShopCategoryCombineService {
 
     private HeadLineService headLineService;

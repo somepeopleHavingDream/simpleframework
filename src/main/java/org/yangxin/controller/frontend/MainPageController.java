@@ -1,5 +1,6 @@
 package org.yangxin.controller.frontend;
 
+import org.simpleframework.core.annotation.Controller;
 import org.yangxin.entity.dto.MainPageInfoDTO;
 import org.yangxin.entity.dto.Result;
 import org.yangxin.service.combine.HeadLineShopCategoryCombineService;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author yangxin
  * 2020/06/26 00:03
  */
+@Controller
 public class MainPageController {
 
     private HeadLineShopCategoryCombineService headLineShopCategoryCombineService;

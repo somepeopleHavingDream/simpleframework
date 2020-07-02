@@ -1,5 +1,6 @@
 package org.yangxin.controller.superadmin;
 
+import org.simpleframework.core.annotation.Controller;
 import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.dto.Result;
 import org.yangxin.service.solo.HeadLineService;
@@ -12,6 +13,7 @@ import java.util.List;
  * @author yangxin
  * 2020/06/26 00:06
  */
+@Controller
 public class HeadLineOperationController {
 
     private HeadLineService headLineService;

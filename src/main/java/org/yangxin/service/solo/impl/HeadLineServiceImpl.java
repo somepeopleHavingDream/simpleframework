@@ -1,5 +1,6 @@
 package org.yangxin.service.solo.impl;
 
+import org.simpleframework.core.annotation.Service;
 import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.dto.Result;
 import org.yangxin.service.solo.HeadLineService;
@@ -10,6 +11,7 @@ import java.util.List;
  * @author yangxin
  * 2020/06/19 11:35
  */
+@Service
 public class HeadLineServiceImpl implements HeadLineService {
 
     @Override
