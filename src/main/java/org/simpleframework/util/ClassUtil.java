@@ -136,6 +136,7 @@ public class ClassUtil {
      * @param <T>        class的类型
      * @return 实例化出来的对象
      */
+    @SuppressWarnings("unchecked")
     public static <T> T newInstance(Class<?> clazz, boolean accessible) {
         try {
             Constructor<?> constructor = clazz.getDeclaredConstructor();
