@@ -1,6 +1,7 @@
 package org.yangxin.controller.superadmin;
 
 import org.simpleframework.core.annotation.Controller;
+import org.simpleframework.inject.annotation.Autowired;
 import org.yangxin.entity.bo.ShopCategory;
 import org.yangxin.entity.dto.Result;
 import org.yangxin.service.solo.ShopCategoryService;
@@ -13,9 +14,11 @@ import java.util.List;
  * @author yangxin
  * 2020/06/26 00:17
  */
+@SuppressWarnings("unused")
 @Controller
 public class ShopCategoryOperationController {
 
+    @Autowired
     private ShopCategoryService shopCategoryService;
 
     public Result<Boolean> addShopCategory(HttpServletRequest request, HttpServletResponse response) {

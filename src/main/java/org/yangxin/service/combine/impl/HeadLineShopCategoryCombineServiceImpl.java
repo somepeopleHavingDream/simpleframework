@@ -1,6 +1,7 @@
 package org.yangxin.service.combine.impl;
 
 import org.simpleframework.core.annotation.Service;
+import org.simpleframework.inject.annotation.Autowired;
 import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.bo.ShopCategory;
 import org.yangxin.entity.dto.MainPageInfoDTO;
@@ -15,10 +16,13 @@ import java.util.List;
  * @author yangxin
  * 2020/06/19 11:41
  */
+@SuppressWarnings("unused")
 @Service
 public class HeadLineShopCategoryCombineServiceImpl implements HeadLineShopCategoryCombineService {
 
+    @Autowired
     private HeadLineService headLineService;
+    @Autowired
     private ShopCategoryService shopCategoryService;
 
     @Override
