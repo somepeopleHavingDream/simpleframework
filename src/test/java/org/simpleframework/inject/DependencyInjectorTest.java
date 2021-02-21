@@ -25,7 +25,7 @@ class DependencyInjectorTest {
         assertTrue(mainPageController instanceof MainPageController);
         assertNull(mainPageController.getHeadLineShopCategoryCombineService());
 
-        new DependencyInjector().doIOC();
+        new DependencyInjector().doIoc();
         assertNotNull(mainPageController.getHeadLineShopCategoryCombineService());
     }
 }

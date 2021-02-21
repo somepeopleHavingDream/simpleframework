@@ -29,7 +29,7 @@ public class DependencyInjector {
     /**
      * 执行IOC
      */
-    public void doIOC() {
+    public void doIoc() {
         if (ValidationUtil.isEmpty(beanContainer.getClasses())) {
             log.warn("empty classSet in BeanContainer");
         }
@@ -77,11 +77,6 @@ public class DependencyInjector {
         }
 
         Class<?> implementedClass = getImplementedClass(fieldClass, autowiredValue);
-//        if (implementedClass != null) {
-//            return beanContainer.getBean(implementedClass);
-//        } else {
-//            return null;
-//        }
         return implementedClass != null ? beanContainer.getBean(implementedClass) : null;
     }
 

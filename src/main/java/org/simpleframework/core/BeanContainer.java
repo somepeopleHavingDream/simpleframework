@@ -73,6 +73,7 @@ public class BeanContainer {
      * @author yangxin
      * 2020/07/02 11:05
      */
+    @SuppressWarnings("AlibabaEnumConstantsMustHaveComment")
     private enum ContainerHolder {
 
         HOLDER;
