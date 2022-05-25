@@ -19,6 +19,7 @@ import java.util.Set;
  * @author yangxin
  * 2020/06/29 10:44
  */
+@SuppressWarnings("AlibabaUndefineMagicConstant")
 @Slf4j
 public class ClassUtil {
 
@@ -69,9 +70,11 @@ public class ClassUtil {
             return;
         }
 
-        // 如果是一个文件夹，则调用其listFiles方法获取文件夹下的文件或文件夹
-        // 这个地方也算是一个妙用，避免了用一般遍历算法，多写一个方法
-        // 这个files装的全部是目录
+        /*
+         如果是一个文件夹，则调用其listFiles方法获取文件夹下的文件或文件夹
+         这个地方也算是一个妙用，避免了用一般遍历算法，多写一个方法
+         这个files装的全部是目录
+        */
         File[] files = fileSource.listFiles(new FileFilter() {
 
             @Override
@@ -92,7 +95,8 @@ public class ClassUtil {
 
             /**
              * 根据class文件的绝对路径，获取并生成class对象，并放入classSet中
-             *  @param absoluteFilePath 绝对路径
+             *
+             * @param absoluteFilePath 绝对路径
              */
             private void addToClassSet(String absoluteFilePath) {
                 // 1. 从class文件的绝对值路径里提取出包含了package的类名
@@ -141,8 +145,10 @@ public class ClassUtil {
     public static <T> T newInstance(Class<?> clazz, boolean accessible) {
         try {
             Constructor<?> constructor = clazz.getDeclaredConstructor();
-            // 在Java中可以通过反射进行获取实体类中的字段值，当未设置Field的setAccessible方法为true时，会在调用的时候进行访问安全检查，
-            // 会抛出IllegalAccessException异常
+            /*
+             在Java中可以通过反射进行获取实体类中的字段值，当未设置Field的setAccessible方法为true时，会在调用的时候进行访问安全检查，
+             会抛出IllegalAccessException异常
+            */
             constructor.setAccessible(accessible);
             return (T) constructor.newInstance();
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -163,9 +169,9 @@ public class ClassUtil {
     /**
      * 设置类的属性值
      *
-     * @param field 成员变量
-     * @param target 类实例
-     * @param value 成员变量的值
+     * @param field      成员变量
+     * @param target     类实例
+     * @param value      成员变量的值
      * @param accessible 是否允许设置私有属性
      */
     public static void setField(Field field, Object target, Object value, boolean accessible) {

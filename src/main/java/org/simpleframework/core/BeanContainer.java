@@ -123,7 +123,7 @@ public class BeanContainer {
      * 添加一个class对象及其Bean实例
      *
      * @param clazz Class对象
-     * @param bean Bean实例
+     * @param bean  Bean实例
      * @return 原有的Bean实例，没有则返回null
      */
     public Object addBean(Class<?> clazz, Object bean) {
@@ -179,16 +179,14 @@ public class BeanContainer {
         Set<Class<?>> keySet = getClasses();
         if (ValidationUtil.isEmpty(keySet)) {
             log.warn("nothing in beanMap.");
-            return null;
+            return Collections.emptySet();
         }
 
         // 2. 通过注解筛选被注解标记的class对象，并添加到classSet里
-        Set<Class<?>> classSet = keySet.stream()
+        return keySet.stream()
                 // 类是否有相关的注解标记
                 .filter(clazz -> clazz.isAnnotationPresent(annotation))
                 .collect(Collectors.toSet());
-
-        return classSet.size() > 0 ? classSet : null;
     }
 
     /**
@@ -202,15 +200,13 @@ public class BeanContainer {
         Set<Class<?>> keySet = getClasses();
         if (ValidationUtil.isEmpty(keySet)) {
             log.warn("nothing in beanMap.");
-            return null;
+            return Collections.emptySet();
         }
 
         // 2. 判断keySet里的元素是否是传入的接口或者类的子类，如果是，就将其添加到classSet里
-        Set<Class<?>> classSet = keySet.stream()
+        return keySet.stream()
                 // 判断keySet里的元素是否是传入的接口或者类的子类
                 .filter(clazz -> interfaceOrClass.isAssignableFrom(clazz) && !clazz.equals(interfaceOrClass))
                 .collect(Collectors.toSet());
-
-        return classSet.size() > 0 ? classSet : null;
     }
 }

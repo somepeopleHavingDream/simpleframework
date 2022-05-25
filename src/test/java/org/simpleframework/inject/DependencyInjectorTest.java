@@ -16,7 +16,7 @@ class DependencyInjectorTest {
 
     @Test
     @DisplayName("依赖注入doIOC")
-    void doIOC() {
+    void doIoc() {
         BeanContainer beanContainer = BeanContainer.getInstance();
         beanContainer.loadBeans("org.yangxin");
         assertTrue(beanContainer.isLoaded());
