@@ -1,5 +1,6 @@
 package org.yangxin.service.solo.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.simpleframework.core.annotation.Service;
 import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.dto.Result;
@@ -12,10 +13,12 @@ import java.util.List;
  * 2020/06/19 11:35
  */
 @Service
+@Slf4j
 public class HeadLineServiceImpl implements HeadLineService {
 
     @Override
     public Result<Boolean> addHeadLine(HeadLine headLine) {
+        log.info("addHeadLine被执行啦");
         return null;
     }
 
