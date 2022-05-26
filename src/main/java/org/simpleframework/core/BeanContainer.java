@@ -3,6 +3,7 @@ package org.simpleframework.core;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.simpleframework.aop.annotation.Aspect;
 import org.simpleframework.core.annotation.Component;
 import org.simpleframework.core.annotation.Controller;
 import org.simpleframework.core.annotation.Repository;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * @author yangxin
  * 2020/07/02 11:00
  */
-@SuppressWarnings({"DuplicatedCode", "unused"})
+@SuppressWarnings({"DuplicatedCode", "unused", "UnusedReturnValue"})
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BeanContainer {
@@ -35,7 +36,7 @@ public class BeanContainer {
      * 加载bean的注解列表
      */
     private static final List<Class<? extends Annotation>> BEAN_ANNOTATION_LIST
-            = Arrays.asList(Component.class, Controller.class, Service.class, Repository.class);
+            = Arrays.asList(Component.class, Controller.class, Service.class, Repository.class, Aspect.class);
 
     /**
      * 容器是否已经被加载过
