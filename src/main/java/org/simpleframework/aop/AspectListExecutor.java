@@ -1,11 +1,12 @@
 package org.simpleframework.aop;
 
+import lombok.Getter;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.simpleframework.aop.aspect.AspectInfo;
+import org.simpleframework.util.ValidationUtil;
 
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -18,13 +19,17 @@ public class AspectListExecutor implements MethodInterceptor {
     /**
      * 被代理的类
      */
-    private Class<?> targetClass;
+    private final Class<?> targetClass;
 
-    private List<AspectInfo> aspectInfoList;
+    /**
+     * 排好序的Aspect列表
+     */
+    @Getter
+    private final List<AspectInfo> sortedAspectInfoList;
 
-    public AspectListExecutor(Class<?> targetClass, List<AspectInfo> aspectInfoList) {
+    public AspectListExecutor(Class<?> targetClass, List<AspectInfo> sortedAspectInfoList) {
         this.targetClass = targetClass;
-        this.aspectInfoList = sortAspectInfoList(aspectInfoList);
+        this.sortedAspectInfoList = sortAspectInfoList(sortedAspectInfoList);
     }
 
     /**
@@ -39,7 +44,74 @@ public class AspectListExecutor implements MethodInterceptor {
     }
 
     @Override
-    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        return null;
+    public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+        /*
+            1 按照order的顺序升序执行完所有Aspect的before方法
+            2 执行被代理类的方法
+            3 如果被代理方法正常返回，则按照order的顺序降序执行完所有Aspect的afterReturning方法
+            4 如果被代理方法抛出异常，则按照order的顺序降序执行完所有Aspect的afterThrowing方法
+         */
+
+        Object returnValue = null;
+        if (ValidationUtil.isEmpty(sortedAspectInfoList)) {
+            return returnValue;
+        }
+
+        // 1 按照order的顺序升序执行完所有Aspect的before方法
+        invokeBeforeAdvices(method, args);
+        try {
+            // 2 执行被代理类的方法
+            returnValue = methodProxy.invokeSuper(proxy, args);
+            // 3 如果被代理方法正常返回，则按照order的顺序降序执行完所有Aspect的afterReturning方法
+            returnValue = invokeAfterReturningAdvices(method, args, returnValue);
+        } catch (Exception e) {
+            // 4 如果被代理方法抛出异常，则按照order的顺序降序执行完所有Aspect的afterThrowing方法
+            invokeAfterThrowingAdvices(method, args, e);
+        }
+        return returnValue;
+    }
+
+    /**
+     * 如果被代理方法抛出异常，则按照order的顺序降序执行完所有Aspect的afterThrowing方法
+     *
+     * @param method 方法
+     * @param args 方法参数
+     * @param e 异常
+     */
+    private void invokeAfterThrowingAdvices(Method method, Object[] args, Exception e) throws Throwable {
+        for (int i = sortedAspectInfoList.size() - 1; i >= 0; i--) {
+            sortedAspectInfoList.get(i).getAspectObject().afterThrowing(targetClass, method, args, e);
+        }
+    }
+
+    /**
+     * 如果被代理方法正常返回，则按照order的顺序降序执行完所有Aspect的afterReturning方法
+     *
+     * @param method 方法
+     * @param args 方法参数
+     * @param returnValue 返回值
+     * @return 切面处理之后的返回值
+     */
+    private Object invokeAfterReturningAdvices(Method method, Object[] args, Object returnValue) throws Throwable {
+        Object result = null;
+        for (int i = sortedAspectInfoList.size() - 1; i >= 0; i--) {
+            result = sortedAspectInfoList.get(i)
+                    .getAspectObject()
+                    .afterReturning(targetClass, method, args, returnValue);
+        }
+        return result;
+    }
+
+    /**
+     * 按照order的顺序升序完成所有Aspect的before方法
+     *
+     * @param method 方法
+     * @param args 方法参数
+     * @throws Throwable 可抛出实例
+     */
+    private void invokeBeforeAdvices(Method method, Object[] args) throws Throwable {
+        for (AspectInfo aspectInfo : sortedAspectInfoList) {
+            aspectInfo.getAspectObject().before(targetClass, method, args);
+        }
     }
 }
