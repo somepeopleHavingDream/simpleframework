@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  * @author yangxin
  * 2022/5/26 21:50
  */
-@Aspect(value = Service.class)
+@Aspect(pointcut = "within(org.simpleframework.core.annotation.Component)")
 @Order(10)
 @Slf4j
 public class ServiceInfoRecordAspect extends DefaultAspect {

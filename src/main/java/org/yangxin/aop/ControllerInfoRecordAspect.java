@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * @author yangxin
  * 2022/5/26 21:50
  */
-@Aspect(value = Controller.class)
+@Aspect(pointcut = "within(org.yangxin.controller.superadmin.*)")
 @Order(10)
 @Slf4j
 public class ControllerInfoRecordAspect extends DefaultAspect {
