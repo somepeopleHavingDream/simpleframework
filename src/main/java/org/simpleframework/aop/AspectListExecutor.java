@@ -8,7 +8,6 @@ import org.simpleframework.util.ValidationUtil;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -67,6 +66,11 @@ public class AspectListExecutor implements MethodInterceptor {
         return returnValue;
     }
 
+    /**
+     * 收集精确匹配的切面集
+     *
+     * @param method 方法对象
+     */
     private void collectAccurateMatchedAspectList(Method method) {
         if (ValidationUtil.isEmpty(sortedAspectInfoList))  {
             return;

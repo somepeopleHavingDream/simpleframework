@@ -7,8 +7,9 @@ import org.simpleframework.aop.aspect.DefaultAspect;
 import org.simpleframework.core.BeanContainer;
 import org.simpleframework.util.ValidationUtil;
 
-import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author yangxin
@@ -44,11 +45,17 @@ public class AspectWeaver {
             List<AspectInfo> roughMatchedAspectList = collectRoughMatchedAspectListForSpecificClass(aspectInfoList,
                     targetClass);
             // 5 尝试进行Aspect的织入
-            wrapIfNecessay(roughMatchedAspectList, targetClass);
+            wrapIfNecessary(roughMatchedAspectList, targetClass);
         }
     }
 
-    private void wrapIfNecessay(List<AspectInfo> roughMatchedAspectList, Class<?> targetClass) {
+    /**
+     * 如果有必要的话，做一层收集工作
+     *
+     * @param roughMatchedAspectList 粗略匹配过的切面信息
+     * @param targetClass 目标类对象
+     */
+    private void wrapIfNecessary(List<AspectInfo> roughMatchedAspectList, Class<?> targetClass) {
         if (ValidationUtil.isEmpty(roughMatchedAspectList)) {
             return;
         }
@@ -59,7 +66,15 @@ public class AspectWeaver {
         beanContainer.addBean(targetClass, proxyBean);
     }
 
-    private List<AspectInfo> collectRoughMatchedAspectListForSpecificClass(List<AspectInfo> aspectInfoList, Class<?> targetClass) {
+    /**
+     * 为指定的类对象收集粗略匹配通过的切面信息
+     *
+     * @param aspectInfoList 切面信息集
+     * @param targetClass 目标类对象
+     * @return 切面信息集
+     */
+    private List<AspectInfo> collectRoughMatchedAspectListForSpecificClass(List<AspectInfo> aspectInfoList,
+                                                                           Class<?> targetClass) {
         List<AspectInfo> roughMatchedAspectList = new ArrayList<>();
         for (AspectInfo aspectInfo : aspectInfoList) {
             // 粗筛
@@ -71,6 +86,12 @@ public class AspectWeaver {
         return roughMatchedAspectList;
     }
 
+    /**
+     * 打包切面信息列表
+     *
+     * @param aspectSet 切面集
+     * @return 切面信息列表
+     */
     private List<AspectInfo> packAspectInfoList(Set<Class<?>> aspectSet) {
         List<AspectInfo> aspectInfoList = new ArrayList<>();
         for (Class<?> aspectClass : aspectSet) {
@@ -91,24 +112,6 @@ public class AspectWeaver {
         }
 
         return aspectInfoList;
-    }
-
-    private void weaveByCategory(Class<? extends Annotation> category, List<AspectInfo> aspectInfoList) {
-        // 1 获取被代理类的集合
-        Set<Class<?>> classSet = beanContainer.getClassesByAnnotation(category);
-        if (ValidationUtil.isEmpty(classSet)) {
-            return;
-        }
-
-        // 2 遍历被代理类，分别为每个被代理类生成动态代理实例
-        for (Class<?> targetClass : classSet) {
-            // 创建动态代理对象
-            AspectListExecutor aspectListExecutor = new AspectListExecutor(targetClass, aspectInfoList);
-            Object proxyBean = ProxyCreator.createProxy(targetClass, aspectListExecutor);
-
-            // 3 将动态代理对象实例添加到容器里，取代未被代理前的类实例
-            beanContainer.addBean(targetClass, proxyBean);
-        }
     }
 
     /**
