@@ -1,0 +1,327 @@
+# Spring源码轻松学 一课覆盖Spring核心知识点
+## 第1章 课程导学与概览
+- 守与攻
+    - 快速读懂他人的、甚至大神级的框架代码
+    - 设计出让自己变得不可替代的技术方案
+    - 切入点：读懂Sping框架的核心源码，锻炼框架的设计能力
+- 授之以鱼不如授之以渔
+    - 通过自研框架这个“模拟赛道”了解Spring的设计
+    - 深入Spring框架洞悉核心脉络
+    - 课后顺藤摸瓜，逐个击破
+- 课程概览
+    - 完成web框架开发
+        - 顶层设计：MVC思想先行
+        - 实现IOC容器与DI依赖注入双剑合璧
+        - 深入AOP：Spring精髓所在
+        - 再现MVC：首尾呼应打造学习闭环
+        - 特色：穿插设计模式+实用工具类的使用
+    - 剖析Spring框架源码
+        - 编译Spring框架源码
+        - 剖析Spring容器和依赖注入相关核心源码
+        - 攻克SpringAOP的核心源码
+        - 精讲SpringMVC的核心源码
+        - 特色：面试要点以及设计经验分享
+- 摆正心态合理看待课程
+    - 课程不可能覆盖Spring源码的方方面面
+    - 更多的是可以打开一扇入门Spring源码以及框架设计的重要性
+## 第2章 环境准备
+- 本节课程的目的
+    - 了解自研框架的总体架构设计
+    - 了解Spring的总体架构以及学习路径
+-  出于信仰学习Spring的简史
+    - 详尽的文档
+    - 快速方便地集成项目用到的技术
+- Spring的设计初衷
+    - 可以采用Spring来构造任何程序，而不局限于Web程序
+    - 轻量级：最少的侵入，与应用程序低耦合，接入成本低
+    - 最直观的感受：基于POJO，构建出稳健而强大的应用
+- Spring的野心
+    - 微服务
+    - 社交API集成
+    - 云计算
+    - 移动计算
+    - 安全管理
+    - 其他
+- Spring基础核心模块预览
+    - spring-core
+        - 包含框架基本的核心工具类，其他组件都要使用到这个包里的类
+        - 定义并提供资源的访问方式
+    - spring-beans：Spring主要面向Bean编程（BOP）
+        - Bean的定义
+        - Bean的解析
+        - Bean的创建
+        - BeanFactory
+    - spring-context
+        - 为Spring提供运行时环境，保存对象的状态
+        - 扩展了BeanFactory
+    - spring-aop：最小化的动态代理实现
+        - jdk动态代理
+        - cglib
+        - 只能使用运行时织入，仅支持方法级编织，仅支持方法执行切入点
+- 学好Spring的建议
+    - 阅读Spring的官方文档
+    - 多动手调试
+    - 掌握设计模式，熟悉Spring框架的标签和注解的作用
+- 软件版本知识点补充
+    - GA：General Availability，官方正式发布的稳定版本
+    - 同质的还有RELEASE，Stable，Final
+    -  RC：Release Candidate，发行候选版本，基本不再加入新的功能
+    - Alpha：内部测试版本，bug较多，功能不全
+    - Beta：公开测试版，比Alpha版本晚些，还会加功能，修bug
+    - M：Milestone，开发期发行版本，边开发边发行
+- 关于自研框架
+    - 目的：为了更好地了解Spring框架
+    - 注意的点：会有所取舍，不一定严格与Spring线路同步
+    - 建议：还是得多动手，边看边跟着做
+- 自研框架架构简图
+    - Infrastructure
+        - Servlet
+        - MVC
+    - Web
+        - IOC
+        - AOP
+        - Parser
+## 第3章 业务系统架子的构建【自研框架的起源】
+- 项目总体需求
+    - 走过场，开发一个多店铺管理以及展示系统
+    - 只关注模块间的交互以及类的管理
+    - 核心目标：抽象出通用的框架
+- 前端展示系统首页的需求
+    - 访问首页的时候，展示头条列表和店铺类别列表
+    - 管理员通过后台对头条和店铺类别进行增删改操作
+- 实际工作中大致的开发流程
+    - 需求评审会，pk需求优先级
+    - 系统设计与技术评审，确定研发以及测试的排期
+- 用例分析
+    - 获取头条列表
+    - 获取店铺类别列表
+    - 增加头条信息
+    - 增加店铺类别信息
+    - 修改头条信息
+    - 修改店铺类别信息
+    - 删除头条
+    - 删除店铺类别
+- 架构设计
+    - 从整体到局部逐步实现，采用MVC架构
+        - Model、View、Controller
+    - 通过slf4j实现对多种日志框架的兼容
+- Servlet
+    - 实例化：Servlet容器创建Servlet的实例
+    - 初始化：该容器调用init()方法
+    - 服务：如果请求Servlet，则容器调用service()方法
+    - 销毁：销毁实例之前调用destory()方法
+- 减少Servlet的数量
+    - 一个Servlet对应一个实体类？
+        - 职责会不单一
+        - 前端发送两次请求给不同的Servlet处理
+        - 将两个Servlet合并成一个Servlet
+    - 一个Servlet对应一个页面？
+        - 若一个页面出现两个Get相同请求，则doGet方法指代不清晰
+    - 参照Spring MVC，仅通过DispatcherServlet进行请求派发
+## 第4章 自研框架IOC实现前奏【从项目开发到框架开发的转换】
+## 第5章 自研框架IOC容器的实现【实战了解SpringIOC的脉络】
+- 框架具备的最基本功能
+    - 解析配置
+    - 定位与注册对象
+    - 注入对象
+    - 提供通用的工具类
+- ioc容器的实现
+    - 创建注解
+    - 提取标记对象
+        - 指定范围，获取范围内的所有类
+        - 遍历所有类，获取被注解标记的类并加载进容器里
+    - 实现容器
+        - 保存Class对象及其实例的载体
+        - 容器的加载
+            - 配置的管理与获取
+            - 获取指定范围内的Class对象
+            - 依据配置提取Class对象，连同实例一并存入容器
+        - 容器的操作方式
+            - 增加、删除操作
+            - 根据Class获取对应实例
+            -  获取所有的Class和实例
+            - 通过注解来获取被注解标注的Class
+            - 通过超类获取对应的子类Class
+            - 获取容器载体保存Class的数量
+    - 依赖注入
+        - 实现相关的注解标签
+        - 实现创建被注解标记的成员变量实例，并将其注入到成员变量里
+        - 依赖注入的使用
+## 第6章 SpringIOC容器的源码解析【正式向Spring宣战】
+- 正式进攻Spring阵地
+    - 心理辅导
+        - 不要太在意版本的问题
+        - 覆盖所有细节是不可能的，只能授之以渔
+        - 抓住骨架进行学习，利用课下时间全面开花
+        - 多去学习api用法，为框架学习提供火力支援
+- 抓住主心骨进行学习
+    - 解析配置
+    - 定位与注册对象
+    - 注入对象
+- Bean与BeanDefinition
+    - Bean的本质就是java对象，这是这个对象的声明周期由容器来管理
+    - 不需要为了创建Bean而在原来的java类上添加如何额外的限制
+    - 对java对象的控制方式体现在配置上
+- BeanDefinition--Bean的定义
+    - 作用范围scope（@Scope）
+    - 懒加载lazy-init（@Lazy）：决定Bean实例是否延迟加载
+    - 首选primary（@Primary）：设置为true的bean会是优先的实现类
+    - factory-bean和factory-method（@Configuration和@Bean）
+- 容器初始化主要做的事情（主要脉络）
+    - 配置文件
+    - Resource
+    - BeanDefinition
+    - 容器
+- 术语补充
+    - 组件扫描：自动发现应用容器中需要创建的Bean
+    - 自动装配：自动满足Bean之间的依赖
+- ApplicationContext常用容器
+    - 传统的基于XML配置的经典容器
+        - FileSystemXmlApplicationContext：从文件系统加载配置
+        - ClassPathXmlApplicationContext：从classpath加载配置
+        - XmlWebApplicationContext：用于Web应用程序的容器
+    - 目前比较流行的容器
+        - AnnotationConfigServletWebServerApplicationContext
+        - AnnotationConfigReactiveWebServerApplicationContext
+          -AnnotationConfigApplicationContext
+- 根据资源地址自动选择正确的Resource
+    - 自动识别“classpath:”、“file:”等资源地址前缀
+    - 支持自动解析Ant风格带通配符的资源地址
+- Ant
+    - ?匹配任何单字符
+    - *匹配0或者任意数量的字符
+    - **匹配0或者更多的目录
+## 第7章 详解SpringIOC容器的初始化【打通refresh方法的全链路】
+- 后置处理器PostProcessor
+    - 其里面的方法会在特定的时机被容器调用
+    - 实现不改变容器或者Bean核心逻辑的情况下对Bean进行扩展
+    - 对Bean进行包装，影响其行为、修改Bean的内容等
+- PostProcessor的种类
+    - BeanDefinitionRegistryPostProcessor
+    - BeanFactoryPostProcessor
+    - BeanPostProcessor
+- Aware
+    - 从Bean里获取到的容器实例并对其进行操作
+- Spring的事件驱动模型
+    - 事件：ApplicationEvent抽象类
+    - 事件监听器：ApplicationListener
+    - 事件发布器：Publisher以及Multicaster
+- refresh
+    - prepareRefresh 刷新前的工作准备
+    - obtainFreshBeanFactory 获取子类刷新后的内部beanFactory实例
+    - prepareBeanFactory 为容器注册必要的系统级别的Bean
+    - postProcessBeanFactory 允许容器的子类去注册postProcessor
+    - invokeBeanFactoryPostProcessors 调用容器注册的容器级别的后置处理器
+    - registerBeanPostProcessors 向容器注册Bean级别的后置处理器
+    - initMessageSource 初始化国际化配置
+    - initApplicationEventMulticaster 初始化事件发布者组件
+    - onRefresh 在单例bean初始化之前预留给子类初始化其他特殊bean的口子
+    - registerListeners 向前面的事件发布者组件注册事件监听者
+    - finishBeanFactoryInitialization 设置系统级别的服务，实例化所有非懒加载的实例
+    - finishRefresh 触发初始化完成的回调方法，并发布容器刷新完成的事件给监听者
+    - resetCommonCaches 重置Spring内核中的共用缓存
+## 第8章 精讲SpringIOC容器的依赖注入【攻坚Bean实例的创建】
+- 闪击Spring的依赖注入
+    - Spring在Bean实例的创建过程中做了很多精细化控制
+    - 理清脉络，不要陷入细节
+- doGetBean
+    - 1 尝试从缓存获取Bean
+    - 2 循环依赖的周期
+    - 3 递归去父容器获取Bean实例
+    - 4 从当前容器获取BeanDefinition实例
+    - 5 递归实例化显示依赖的Bean
+    - 6 根据不同的Scope才用不同的策略创建Bean实例
+    - 7 对Bean进行类型检查
+- Spring是否支持所有循环依赖的情况
+    - 只支持Setter织入的单例循环依赖
+- populateBean
+    - postProcessAfterInstantiation：在设置属性前去修改Bean状态，也可以控制是否继续给Bean设置属性值
+    - 注入属性到PropertyValues中（按名字装配or按类型装配）
+    - postProcessProertyValues：对解析完但未设置的属性进行再处理
+    - 是否进行依赖检查
+    - 将PropertyValues中的属性值设置到BeanWrapper中
+## 第9章 自研框架AOP的讲解与实现【实战了解SpringAOP的核心脉络】
+- 容器是OOP的高级工具
+    - 按部就班填充代码逻辑实现业务功能，每层逻辑都可无缝替换
+    - OOP将业务程序分解成各个层次的对象，通过对象联动完成业务
+    - 无法很好地处理分散在各业务里的通用系统需求
+- 系统需求
+    - 添加日志信息：为每个方法添加添加统计时间
+    - 添加系统权限校验：针对某些方法进行限制
+    - OOP下必须得为每个方法都添加通用的逻辑工作，增加维护成本
+- 关注点分离Concern Separation
+    - Aspect Oriented Programming就是其中一种关注点分离的技术
+    - 通用化功能的代码实现即切面Aspect
+    - Aspect之于AOP，就相当于Class之于OOP，Bean之于Spring
+- AOP的子民们
+    - 切面Aspect：将横切关注点逻辑进行模块化封装的实体对象
+    - 通知Advice：好比是Class里面的方法，还定义了织入逻辑的时机
+    - 连接点Joinpoint，允许使用Advice的地方
+    - SpringAOP默认只支持方法级别的Joinpoint
+    - 切入点Pointcut：定义一系列规则对Joinpoint进行筛选
+    - 目标对象Target：符合Pointcut条件，要被织入横切逻辑的对象
+- Advice的种类
+    - BeforeAdvice：在JoinPoint前被执行的Advice
+    - AfterAdvice：好比try..catch..finaly里面的finally
+    - AfterReturningAdvice：在Joinpoint执行流程正常返回后被执行
+    - AfterThrowingAdvice：Joinpoint执行过程中抛出异常才会触发
+    - AroundAdvice：在Joinpoint前和后都执行，最常用的Advice
+- AOP是OOP来得“寄生虫”
+    - 织入：将Aspect模块化的横切关注点集成到OOP里
+    - 织入器：完成织入过程的执行者，如ajc
+    - Spring AOP则会使用一组类来作为织入器以完成最终的织入操作
+- SpringAOP的实现原理之JDK动态代理
+    - 程序运行时动态生成类的字节码，并加载到JVM中
+    - 要求【被代理的类】必须实现接口
+    - 并不要求【代理对象】去实习接口，所以可以复用代理对象的逻辑
+- SpringAOP的实现原理之CGLIB动态代理
+    - 不要求被代理类实现接口
+    - 内部主要封装了ASM Java字节码操控框架
+    - 动态生成子类以覆盖非final的方法，绑定钩子回调自定义拦截器
+- JDK动态代理和CGLIB
+    - JDK动态代理的优势
+        - JDK原生，在JVM里运行较为可靠
+        - 平滑支持JDK版本的升级
+    - CGLIB的优势
+        -  被代理对象无需实现接口，能实现代理类的无侵入
+- SpringAOP的底层机制
+    - CGLIB和JDK动态代理共存
+    - 默认策略：Bean实现了接口则用JDK，否则使用CGLIB
+- 实现自研框架的AOP1.0
+    - 解决标记的问题，定义横切逻辑的骨架
+        - 定义与横切逻辑相关的注解
+        - 定义供外部使用的横切逻辑骨架
+    - 定义Aspect横切逻辑以及被代理方法的执行顺序
+        - 创建MethodInterceptor的实现类
+        - 定义必要的成员变量---被代理的类以及Aspect列表
+        - 按照Order对Aspect进行排序
+        - 实现对横切逻辑以及被代理对象方法的定序执行
+    - 将横切逻辑织入到被代理的对象以生成动态代理对象
+- 自研框架的AOP1.0待改进的地方
+    - Aspect只支持对被某个标签标记的类进行横切逻辑的织入
+    - 需要披上AspectJ的外衣
+- 改进自研框架的调研
+    - SpringAOP1.0是由Spring自研的
+    - 使用起来不是很方便，需要实现各种各样的接口，并继承指定的类
+    - SpringAOP2.0集成了AspectJ，复用AspectJ的语法树（仅仅用到了AspectJ的切面语法，并没有使用ajc编译工具）
+- AspectJ框架
+    - 定义切面语法已经切面语法的解析机制
+    - 提供了强大的织入工具
+- 折中方案改进框架里的AOP
+    - 让Pointcut更加灵活
+    - 调研结果：只需要引入AspectJ的切面表达式和相关的定位解析机制
+## 第10章 SpringAOP的源码解析【精准打击SpringAOP的核心源码】
+- 攻克SpringAOP
+    - 梳理从机制到使用的整个流程
+    - 开始进攻前先来了解Bean级别的后置处理器
+- 通过注解将类当做Bean管理起来的方式
+    - @Controller @Service @Repository @Component标记的类
+    - @Bean标记的方法
+    - @Import导进来的类
+- SpringAOP的总体流程
+  -注册解析AOP的服务
+    - 解析和加载横切逻辑
+    - 就横切逻辑织入目标Bean中
+## 第11章 自研框架MVC的实现【实战了解SpringMVC的核心脉络】
+## 第12章 SpringMVC流程分析【摸通SpringMVC的应用】
+## 第13章 以终为始【全课总结】
