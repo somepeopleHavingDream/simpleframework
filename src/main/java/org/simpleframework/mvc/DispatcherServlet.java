@@ -43,8 +43,8 @@ public class DispatcherServlet extends HttpServlet {
 
         // 2 初始化请求处理器责任链
         PROCESSOR.add(new PreRequestProcessor());
-        PROCESSOR.add(new StaticResourceRequestProcessor());
-        PROCESSOR.add(new JspRequestProcessor());
+        PROCESSOR.add(new StaticResourceRequestProcessor(getServletContext()));
+        PROCESSOR.add(new JspRequestProcessor(getServletContext()));
         PROCESSOR.add(new ControllerRequestProcessor());
     }
 
