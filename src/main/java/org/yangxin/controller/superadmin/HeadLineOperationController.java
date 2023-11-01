@@ -2,6 +2,8 @@ package org.yangxin.controller.superadmin;
 
 import org.simpleframework.core.annotation.Controller;
 import org.simpleframework.inject.annotation.Autowired;
+import org.simpleframework.mvc.annotation.RequestMapping;
+import org.simpleframework.mvc.type.RequestMethod;
 import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.dto.Result;
 import org.yangxin.service.solo.HeadLineService;
@@ -16,6 +18,7 @@ import java.util.List;
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 @Controller
+@RequestMapping(value = "/headline")
 public class HeadLineOperationController {
 
     @Autowired(value = "HeadLineServiceImpl")
@@ -26,9 +29,9 @@ public class HeadLineOperationController {
         return headLineService.addHeadLine(new HeadLine());
     }
 
-    public Result<Boolean> removeHeadLine(HttpServletRequest request, HttpServletResponse response) {
-        // todo: 参数校验一级请求参数转换
-        return headLineService.removeHeadLine(1);
+    @RequestMapping(value = "/remove", method = RequestMethod.GET)
+    public void removeHeadLine() {
+        System.out.println("删除HeadLine");
     }
 
     public Result<Boolean> modifyHeadLine(HttpServletRequest request, HttpServletResponse response) {
