@@ -151,7 +151,8 @@ public class ClassUtil {
             */
             constructor.setAccessible(accessible);
             return (T) constructor.newInstance();
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
+                 InvocationTargetException e) {
             log.error("newInstance error", e);
             throw new RuntimeException(e);
         }

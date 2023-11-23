@@ -35,12 +35,12 @@ public class ControllerRequestProcessor implements RequestProcessor {
     /**
      * IOC容器
      */
-    private BeanContainer beanContainer;
+    private final BeanContainer beanContainer;
 
     /**
      * 请求和controller方法的映射集合
      */
-    private Map<RequestPathInfo, ControllerMethod> pathControllerMethodMap = new ConcurrentHashMap<>();
+    private final Map<RequestPathInfo, ControllerMethod> pathControllerMethodMap = new ConcurrentHashMap<>();
 
     /**
      * 依靠容器的能力，建立起请求路径、请求方法与Controller方法实例的映射
@@ -113,7 +113,7 @@ public class ControllerRequestProcessor implements RequestProcessor {
     }
 
     @Override
-    public boolean process(RequestProcessorChain requestProcessorChain) throws Exception {
+    public boolean process(RequestProcessorChain requestProcessorChain) {
         // 1 解析HttpServletRequest的请求方法、请求路径，获取对应的ControllerMethod实例
         String method = requestProcessorChain.getRequestMethod();
         String path = requestProcessorChain.getRequestPath();
