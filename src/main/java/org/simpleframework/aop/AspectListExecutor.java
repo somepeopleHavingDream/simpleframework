@@ -47,7 +47,7 @@ public class AspectListExecutor implements MethodInterceptor {
     public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         Object returnValue = null;
         collectAccurateMatchedAspectList(method);
-        if (ValidationUtil.isEmpty(sortedAspectInfoList)) {
+        if (ValidationUtil.isEmpty(this.sortedAspectInfoList)) {
             returnValue = methodProxy.invokeSuper(proxy, args);
             return returnValue;
         }
@@ -63,6 +63,7 @@ public class AspectListExecutor implements MethodInterceptor {
             // 4 如果被代理方法抛出异常，则按照order的顺序降序执行完所有Aspect的afterThrowing方法
             invokeAfterThrowingAdvices(method, args, e);
         }
+
         return returnValue;
     }
 
@@ -72,10 +73,11 @@ public class AspectListExecutor implements MethodInterceptor {
      * @param method 方法对象
      */
     private void collectAccurateMatchedAspectList(Method method) {
-        if (ValidationUtil.isEmpty(sortedAspectInfoList))  {
+        if (ValidationUtil.isEmpty(this.sortedAspectInfoList))  {
             return;
         }
-        sortedAspectInfoList.removeIf(aspectInfo -> !aspectInfo.getPointcutLocator().accurateMatches(method));
+
+        this.sortedAspectInfoList.removeIf(aspectInfo -> !aspectInfo.getPointcutLocator().accurateMatches(method));
     }
 
     /**
@@ -86,8 +88,8 @@ public class AspectListExecutor implements MethodInterceptor {
      * @param e 异常
      */
     private void invokeAfterThrowingAdvices(Method method, Object[] args, Exception e) throws Throwable {
-        for (int i = sortedAspectInfoList.size() - 1; i >= 0; i--) {
-            sortedAspectInfoList.get(i).getAspectObject().afterThrowing(targetClass, method, args, e);
+        for (int i = this.sortedAspectInfoList.size() - 1; i >= 0; i--) {
+            this.sortedAspectInfoList.get(i).getAspectObject().afterThrowing(targetClass, method, args, e);
         }
     }
 
@@ -101,8 +103,8 @@ public class AspectListExecutor implements MethodInterceptor {
      */
     private Object invokeAfterReturningAdvices(Method method, Object[] args, Object returnValue) throws Throwable {
         Object result = null;
-        for (int i = sortedAspectInfoList.size() - 1; i >= 0; i--) {
-            result = sortedAspectInfoList.get(i)
+        for (int i = this.sortedAspectInfoList.size() - 1; i >= 0; i--) {
+            result = this.sortedAspectInfoList.get(i)
                     .getAspectObject()
                     .afterReturning(targetClass, method, args, returnValue);
         }
@@ -117,7 +119,7 @@ public class AspectListExecutor implements MethodInterceptor {
      * @throws Throwable 可抛出实例
      */
     private void invokeBeforeAdvices(Method method, Object[] args) throws Throwable {
-        for (AspectInfo aspectInfo : sortedAspectInfoList) {
+        for (AspectInfo aspectInfo : this.sortedAspectInfoList) {
             aspectInfo.getAspectObject().before(targetClass, method, args);
         }
     }

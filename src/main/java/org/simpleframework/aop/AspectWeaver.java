@@ -30,7 +30,7 @@ public class AspectWeaver {
             return;
         }
 
-        // 2 拼装AspectInfoList
+        // 2 拼装 AspectInfoList
         List<AspectInfo> aspectInfoList = packAspectInfoList(aspectSet);
 
         // 3 遍历容器里的类

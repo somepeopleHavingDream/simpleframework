@@ -23,7 +23,7 @@ public class StaticResourceRequestProcessor implements RequestProcessor {
     /**
      * tomcat默认请求派发器RequestDispatcher的名称
      */
-    private RequestDispatcher defaultDispatcher;
+    private final RequestDispatcher defaultDispatcher;
 
     public StaticResourceRequestProcessor(ServletContext servletContext) {
         this.defaultDispatcher = servletContext.getNamedDispatcher(DEFAULT_TOMCAT_SERVLET);

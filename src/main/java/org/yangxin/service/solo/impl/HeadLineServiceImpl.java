@@ -6,6 +6,8 @@ import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.dto.Result;
 import org.yangxin.service.solo.HeadLineService;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,8 +20,14 @@ public class HeadLineServiceImpl implements HeadLineService {
 
     @Override
     public Result<Boolean> addHeadLine(HeadLine headLine) {
-        log.info("addHeadLine被执行啦");
-        return null;
+        log.info("headLine -> {}", headLine);
+
+        Result<Boolean> result = new Result<>();
+        result.setCode(200);
+        result.setMsg("请求成功啦");
+        result.setData(true);
+
+        return result;
     }
 
     @Override
@@ -39,6 +47,19 @@ public class HeadLineServiceImpl implements HeadLineService {
 
     @Override
     public Result<List<HeadLine>> queryHeadLine(HeadLine headLineCondition, int pageIndex, int pageSize) {
-        return null;
+        HeadLine headLine = new HeadLine();
+        headLine.setLineId(0L);
+        headLine.setLineName("");
+        headLine.setLineLink("");
+        headLine.setLineImg("");
+        headLine.setPriority(0);
+        headLine.setEnableStatus(0);
+        headLine.setCreateTime(new Date());
+        headLine.setLastEditTime(new Date());
+
+        Result<List<HeadLine>> result = new Result<>();
+        result.setData(Collections.singletonList(headLine));
+        result.setCode(200);
+        return result;
     }
 }

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class InternalErrorResultRender implements ResultRender {
 
-    private String errorMsg;
+    private final String errorMsg;
 
     public InternalErrorResultRender(String errorMsg) {
         this.errorMsg = errorMsg;

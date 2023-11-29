@@ -3,6 +3,9 @@ package org.yangxin.controller.superadmin;
 import org.simpleframework.core.annotation.Controller;
 import org.simpleframework.inject.annotation.Autowired;
 import org.simpleframework.mvc.annotation.RequestMapping;
+import org.simpleframework.mvc.annotation.RequestParam;
+import org.simpleframework.mvc.annotation.ResponseBody;
+import org.simpleframework.mvc.type.ModelAndView;
 import org.simpleframework.mvc.type.RequestMethod;
 import org.yangxin.entity.bo.HeadLine;
 import org.yangxin.entity.dto.Result;
@@ -24,9 +27,22 @@ public class HeadLineOperationController {
     @Autowired(value = "HeadLineServiceImpl")
     private HeadLineService headLineService;
 
-    public Result<Boolean> addHeadLine(HttpServletRequest request, HttpServletResponse response) {
-        // todo: 参数校验一级请求参数转换
-        return headLineService.addHeadLine(new HeadLine());
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public ModelAndView addHeadLine(@RequestParam("lineName") String lineName,
+                                    @RequestParam("lineLink") String lineLink,
+                                    @RequestParam("lineImg") String lineImg,
+                                    @RequestParam("priority") Integer priority) {
+        HeadLine headLine = new HeadLine();
+        headLine.setLineName(lineName);
+        headLine.setLineLink(lineLink);
+        headLine.setLineImg(lineImg);
+        headLine.setPriority(priority);
+
+        Result<Boolean> result = headLineService.addHeadLine(headLine);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setView("addheadline.jsp").addViewData("result", result);
+        return modelAndView;
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.GET)
@@ -44,8 +60,9 @@ public class HeadLineOperationController {
         return headLineService.queryHeadLineById(1);
     }
 
-    public Result<List<HeadLine>> queryHeadLine(HttpServletRequest request, HttpServletResponse response) {
-        // todo: 参数校验一级请求参数转换
+    @RequestMapping(value = "/query", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<List<HeadLine>> queryHeadLine() {
         return headLineService.queryHeadLine(null, 1, 100);
     }
 }

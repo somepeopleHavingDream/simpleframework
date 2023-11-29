@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.simpleframework.aop.annotation.Aspect;
 import org.simpleframework.aop.annotation.Order;
 import org.simpleframework.aop.aspect.DefaultAspect;
-import org.simpleframework.core.annotation.Controller;
 
 import java.lang.reflect.Method;
 
@@ -12,7 +11,8 @@ import java.lang.reflect.Method;
  * @author yangxin
  * 2022/5/26 21:50
  */
-@Aspect(pointcut = "execution(* org.yangxin.controller.frontend..*.*(..))")
+@SuppressWarnings("unused")
+@Aspect(pointcut = "execution(* org.yangxin.controller.superadmin.HeadLineOperationController.*(..))")
 @Order(0)
 @Slf4j
 public class ControllerTimeCalculatorAspect extends DefaultAspect {

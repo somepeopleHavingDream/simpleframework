@@ -1,8 +1,6 @@
 package org.yangxin.entity.bo;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Date;
 
@@ -15,7 +13,7 @@ public class HeadLine {
 
     private Long lineId;
     private String lineName;
-    private String lineLine;
+    private String lineLink;
     private String lineImg;
     private Integer priority;
     private Integer enableStatus;
